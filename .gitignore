@@ -1,0 +1,37 @@
+# --- Unity generated folders (huge, never commit) ---
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+
+# --- Visual Studio / Rider ---
+.vs/
+.idea/
+*.csproj
+*.sln
+*.user
+*.userosscache
+*.suo
+*.userprefs
+
+# --- OS generated files ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# --- Unity3D generated meta files (keep this, do NOT ignore *.meta) ---
+# *.meta files are required by Unity for asset references
+
+# --- Crashlytics ---
+Crashlytics/*
+
+# --- MemoryCaptures ---
+MemoryCaptures/
