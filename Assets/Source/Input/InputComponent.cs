@@ -8,6 +8,8 @@ public class InputComponent : MonoBehaviour
 
     private InputAction moveAction;
     private InputAction jumpAction;
+    private InputAction lookatAction;
+    private InputAction lookAction;
 
     /// <summary> 当前帧的移动输入 (x: 左右, y: 上下) </summary>
     public Vector2 MoveInput { get; private set; }
@@ -20,6 +22,15 @@ public class InputComponent : MonoBehaviour
 
     /// <summary> 跳跃键是否处于按住状态 </summary>
     public bool JumpHeld { get; private set; }
+
+    /// <summary> 锁定镜头键是否在这一帧被按下 (Q键) </summary>
+    public bool LookatPressed { get; private set; }
+
+    /// <summary> 锁定镜头是否处于按住状态 (Q键 - 锁定镜头) </summary>
+    public bool LookatHeld { get; private set; }
+
+    /// <summary> 当前帧的鼠标屏幕坐标 </summary>
+    public Vector2 MousePosition { get; private set; }
 
     private void Awake()
     {
@@ -39,9 +50,13 @@ public class InputComponent : MonoBehaviour
 
         moveAction = playerMap.FindAction("Move");
         jumpAction = playerMap.FindAction("Jump");
+        lookatAction = playerMap.FindAction("LookAt");
+        lookAction = playerMap.FindAction("Look");
 
         if (moveAction == null) Debug.LogError("InputComponent: 未找到 'Move' Action");
         if (jumpAction == null) Debug.LogError("InputComponent: 未找到 'Jump' Action");
+        if (lookatAction == null) Debug.LogError("InputComponent: 未找到 'lookat' Action");
+        if (lookAction == null) Debug.LogError("InputComponent: 未找到 'Look' Action");
     }
 
     private void OnEnable()
@@ -71,5 +86,12 @@ public class InputComponent : MonoBehaviour
         JumpPressed = jumpAction.WasPressedThisFrame();
         JumpReleased = jumpAction.WasReleasedThisFrame();
         JumpHeld = jumpAction.IsPressed();
+
+        // 读取交互键状态 (Q键 - 锁定镜头)
+        LookatPressed = lookatAction.WasPressedThisFrame();
+        LookatHeld = lookatAction.IsPressed();
+
+        // 从 Look Action 读取鼠标屏幕坐标 (Position [Mouse])
+        MousePosition = lookAction.ReadValue<Vector2>();
     }
 }

@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
   - component: {fileID: 519420030}
+  - component: {fileID: 519420033}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -250,12 +251,29 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: -1.07, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &519420033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e93385bec9b79544afa9bd3a2b90f7d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraController
+  player: {fileID: 1987956565}
+  edgeThreshold: 50
+  edgePanSpeed: 10
+  returnSpeed: 16
+  fixedY: 0
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -526,11 +544,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7537802997670783382, guid: e607daa30a6200d4caddabd158585cf2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 1.47
       objectReference: {fileID: 0}
     - target: {fileID: 7537802997670783382, guid: e607daa30a6200d4caddabd158585cf2, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -2.1
       objectReference: {fileID: 0}
     - target: {fileID: 7537802997670783382, guid: e607daa30a6200d4caddabd158585cf2, type: 3}
       propertyPath: m_LocalPosition.z
@@ -743,7 +761,7 @@ Transform:
   m_GameObject: {fileID: 1987956564}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.5, y: 2.1, z: 0}
+  m_LocalPosition: {x: -1.1, y: -1.72, z: 0}
   m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -821,7 +839,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.17, y: 0.17}
+  m_Size: {x: 0.16, y: 0.2}
   m_EdgeRadius: 0
 --- !u!114 &1987956568
 MonoBehaviour:
@@ -848,8 +866,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3b7b08768d9ba0488089940b0882354, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  moveSpeed: 12
-  jumpForce: 12
+  moveSpeed: 6
+  jumpForce: 6
   groundCheckPoint: {fileID: 0}
   groundCheckSize: {x: 0.15, y: 0.05}
   groundLayer:
