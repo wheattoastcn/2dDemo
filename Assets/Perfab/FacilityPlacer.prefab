@@ -26,8 +26,8 @@ Transform:
   m_GameObject: {fileID: 5886566445741312005}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.2, y: 1.5, z: 1}
+  m_LocalPosition: {x: -0.0023, y: -0.0024, z: 0}
+  m_LocalScale: {x: 1.2516371, y: 1.2328348, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1068023120738323415}
@@ -278,6 +278,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   groundCheckDistance: 0.1
-  validColor: {r: 0, g: 1, b: 0, a: 0.5}
-  invalidColor: {r: 1, g: 0, b: 0, a: 0.5}
+  validColor: {r: 0, g: 1, b: 0, a: 0.23529412}
+  invalidColor: {r: 1, g: 0, b: 0, a: 0.57254905}
   input: {fileID: 0}
