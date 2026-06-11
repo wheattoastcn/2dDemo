@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class BuildManager : MonoBehaviour
 {
@@ -19,6 +20,9 @@ public class BuildManager : MonoBehaviour
     /// <summary> 状态变化事件（UI 等外部监听） </summary>
     public event Action<State> OnStateChanged;
 
+    /// <summary> 设施列表（供 UI 动态生成按钮） </summary>
+    public System.Collections.Generic.List<FacilityInfo> FacilityList => facilityDatas.facilityDatas;
+
     private FacilityInfo currentFacility;
     private FacilityPlacer currentPlacer;
 
@@ -26,15 +30,15 @@ public class BuildManager : MonoBehaviour
     {
         if (CurrentState != State.Previewing || currentPlacer == null) return;
 
-        // 右键 / ESC 取消
-        if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.Escape))
+        // ESC 取消
+        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
         {
             CancelPreview();
             return;
         }
 
-        // 左键确认：绿色 + 按下
-        if (currentPlacer.IsValid && Input.GetMouseButtonDown(0))
+        // 确认键（Attack Action）：绿色 + 按下
+        if (currentPlacer.IsValid && input.AttackPressed)
         {
             PlaceFacility();
         }
@@ -61,16 +65,26 @@ public class BuildManager : MonoBehaviour
         SwitchState(State.Previewing);
     }
 
-    /// <summary> 绿色状态下确认，实例化设施 </summary>
+    /// <summary> 绿色状态下确认，实例化设施并开始建造 </summary>
     private void PlaceFacility()
     {
+        Vector3 pos = currentPlacer.SnapToGround(currentPlacer.transform.position,
+            currentFacility.colliderSize.y * 0.5f);
+
         GameObject facilityObj = Instantiate(currentFacility.prefab,
-            currentPlacer.transform.position,
+            pos,
             Quaternion.identity,
             facilityParent);
 
         // 设为 Facility Layer，后续 Placer 的 OverlapBox 可检测到
         facilityObj.layer = LayerMask.NameToLayer("Facility");
+
+        // 注入设施数据，开始建造
+        Facility facility = facilityObj.GetComponent<Facility>();
+        if (facility == null)
+            facility = facilityObj.AddComponent<Facility>();
+
+        facility.InitAndBuild(currentFacility);
 
         CancelPreview();
     }

@@ -1,2 +1,15 @@
 fileFormatVersion: 2
 guid: 691ba36488c8366479c55ef61fc25b41
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - facilityDatas: {fileID: 11400000, guid: 07ca8364c5c59b74391b47dba8e9d97a, type: 2}
+  - placerPrefab: {instanceID: 0}
+  - facilityParent: {instanceID: 0}
+  - input: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

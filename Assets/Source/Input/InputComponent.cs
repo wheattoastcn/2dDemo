@@ -10,6 +10,7 @@ public class InputComponent : MonoBehaviour
     private InputAction jumpAction;
     private InputAction lookatAction;
     private InputAction lookAction;
+    private InputAction attackAction;
 
     /// <summary> 当前帧的移动输入 (x: 左右, y: 上下) </summary>
     public Vector2 MoveInput { get; private set; }
@@ -32,6 +33,9 @@ public class InputComponent : MonoBehaviour
     /// <summary> 当前帧的鼠标屏幕坐标 </summary>
     public Vector2 MousePosition { get; private set; }
 
+    /// <summary> 当前帧是否按下了攻击/确认键 </summary>
+    public bool AttackPressed { get; private set; }
+
     private void Awake()
     {
         if (inputActions == null)
@@ -52,11 +56,13 @@ public class InputComponent : MonoBehaviour
         jumpAction = playerMap.FindAction("Jump");
         lookatAction = playerMap.FindAction("LookAt");
         lookAction = playerMap.FindAction("Look");
+        attackAction = playerMap.FindAction("Attack");
 
         if (moveAction == null) Debug.LogError("InputComponent: 未找到 'Move' Action");
         if (jumpAction == null) Debug.LogError("InputComponent: 未找到 'Jump' Action");
         if (lookatAction == null) Debug.LogError("InputComponent: 未找到 'lookat' Action");
         if (lookAction == null) Debug.LogError("InputComponent: 未找到 'Look' Action");
+        if (attackAction == null) Debug.LogError("InputComponent: 未找到 'Attack' Action");
     }
 
     private void OnEnable()
@@ -93,5 +99,8 @@ public class InputComponent : MonoBehaviour
 
         // 从 Look Action 读取鼠标屏幕坐标 (Position [Mouse])
         MousePosition = lookAction.ReadValue<Vector2>();
+
+        // 读取攻击/确认键状态
+        AttackPressed = attackAction.WasPressedThisFrame();
     }
 }

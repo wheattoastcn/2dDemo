@@ -17,16 +17,27 @@ public class FacilityPlacer : MonoBehaviour
     [Header("输入")]
     [SerializeField] private InputComponent input;
 
-    private SpriteRenderer sr;
+    private SpriteRenderer displaySr;    // Display 子物体的 SpriteRenderer，显示设施本体
+    private SpriteRenderer overlaySr;    // Background 子物体的 SpriteRenderer，只负责变色
     private BoxCollider2D boxCol;
     private bool isValidPlacement;
 
-    /// <summary> 当前放置位置是否合法 </summary>
     public bool IsValid => isValidPlacement;
+
+    /// <summary> 用自身 groundLayer 做射线，返回贴地坐标 </summary>
+    public Vector3 SnapToGround(Vector3 pos, float halfHeight)
+    {
+        Vector2 origin = (Vector2)pos + Vector2.down * halfHeight;
+        RaycastHit2D hit = Physics2D.Raycast(origin, Vector2.down, 10f, groundLayer);
+        if (hit.collider != null)
+            pos.y = hit.point.y + halfHeight;
+        return pos;
+    }
 
     private void Awake()
     {
-        sr = transform.Find("Background").GetComponent<SpriteRenderer>();
+        displaySr = transform.Find("Display").GetComponent<SpriteRenderer>();
+        overlaySr = transform.Find("Background").GetComponent<SpriteRenderer>();
         boxCol = GetComponent<BoxCollider2D>();
         boxCol.isTrigger = true;
         Physics2D.queriesStartInColliders = true;
@@ -35,8 +46,17 @@ public class FacilityPlacer : MonoBehaviour
     /// <summary> 由 BuildManager 调用，注入数据和输入源 </summary>
     public void Setup(FacilityInfo info, InputComponent inputComp)
     {
-        sr.sprite = info.previewSprite;
+        // 从 Prefab 的子对象 "Sprite" 上取精灵和缩放
+        var prefabSprite = info.prefab.transform.Find("Sprite");
+        var prefabSr = prefabSprite.GetComponent<SpriteRenderer>();
+        if (prefabSr != null)
+        {
+            displaySr.sprite = prefabSr.sprite;
+            displaySr.transform.localScale = prefabSprite.localScale;
+        }
+
         boxCol.size = info.colliderSize;
+        overlaySr.transform.localScale = info.colliderSize;
         input = inputComp;
     }
 
@@ -46,38 +66,31 @@ public class FacilityPlacer : MonoBehaviour
 
         FollowMouse();
         CheckPlacement();
-        UpdateColor();
+        UpdateOverlay();
     }
 
-    /// <summary> 跟随鼠标，Y 锁定地面高度 </summary>
     private void FollowMouse()
     {
         Vector3 worldPos = Camera.main.ScreenToWorldPoint(input.MousePosition);
         worldPos.z = 0f;
-        //worldPos.y = groundY;
         transform.position = worldPos;
     }
 
-    /// <summary> 碰撞检测：需要在地上 + 不与已有设施重叠 </summary>
     private void CheckPlacement()
     {
-        // 射线从设施底部向下检测，小设施大设施自动适配
         float halfHeight = boxCol.size.y * 0.5f;
         Vector2 footOrigin = (Vector2)transform.position + Vector2.down * halfHeight;
         float checkDist = groundCheckDistance;
 
-        // 1. 脚下是否有地面
         RaycastHit2D groundHit = Physics2D.Raycast(footOrigin, Vector2.down, checkDist, groundLayer);
         bool onGround = groundHit.collider != null;
 
-        // 2. 设施身体是否插入地面（只检上方 80%，排除底部正常贴合）
-        float bodyTopRatio = 0.8f;
+        float bodyTopRatio = 0.95f;
         Vector2 bodyCheckSize = new Vector2(boxCol.size.x, boxCol.size.y * bodyTopRatio);
-        Vector2 bodyCheckCenter = (Vector2)transform.position + Vector2.up * (boxCol.size.y * 0.1f);
+        Vector2 bodyCheckCenter = (Vector2)transform.position + Vector2.up * (boxCol.size.y * 0.025f);
         Collider2D bodyInGround = Physics2D.OverlapBox(bodyCheckCenter, bodyCheckSize, 0f, groundLayer);
         bool notInBodyGround = bodyInGround == null;
 
-        // 3. 是否与已有设施重叠
         Collider2D overlap = Physics2D.OverlapBox(transform.position, boxCol.size, 0f, facilityLayer);
         bool noOverlap = overlap == null;
 
@@ -88,10 +101,11 @@ public class FacilityPlacer : MonoBehaviour
             Debug.DrawLine(footOrigin, groundHit.point, Color.yellow);
     }
 
-    /// <summary> 绿 / 红 半透明反馈 </summary>
-    private void UpdateColor()
+    /// <summary> Background 子物体覆盖层变色，设施本体保持原色 </summary>
+    private void UpdateOverlay()
     {
-        sr.color = isValidPlacement ? validColor : invalidColor;
+        if (overlaySr != null)
+            overlaySr.color = isValidPlacement ? validColor : invalidColor;
     }
 
     private void OnDrawGizmos()

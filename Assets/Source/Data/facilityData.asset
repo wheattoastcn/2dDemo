@@ -14,9 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::facilityData
   facilityDatas:
   - facilityName: test1
-    prefab: {fileID: 0}
-    previewSprite: {fileID: 0}
-    builtSprite: {fileID: 0}
-    colliderSize: {x: 0, y: 0}
+    prefab: {fileID: 4301776705682471851, guid: ed6ab6b6e6e46f743a67b19d6a4387de, type: 3}
+    colliderSize: {x: 0.9, y: 1.5}
     buildTime: 0
     cost: 0

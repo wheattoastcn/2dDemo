@@ -6,8 +6,6 @@ public struct FacilityInfo
 {
     public string facilityName;
     public GameObject prefab;
-    public Sprite previewSprite;
-    public Sprite builtSprite;
     public Vector2 colliderSize;
     public float buildTime;
     public int cost;
