@@ -79,13 +79,6 @@ public class BuildManager : MonoBehaviour
         // 设为 Facility Layer，后续 Placer 的 OverlapBox 可检测到
         facilityObj.layer = LayerMask.NameToLayer("Facility");
 
-        // 注入设施数据，开始建造
-        Facility facility = facilityObj.GetComponent<Facility>();
-        if (facility == null)
-            facility = facilityObj.AddComponent<Facility>();
-
-        facility.InitAndBuild(currentFacility);
-
         CancelPreview();
     }
 

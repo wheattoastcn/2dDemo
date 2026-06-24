@@ -1444,6 +1444,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3b7b08768d9ba0488089940b0882354, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  interactRadius: 1
+  facilityLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!114 &1987956570
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -5,57 +5,39 @@ public class Facility : MonoBehaviour
 {
     public enum State { PendingConstruction, Building, Built }
 
-    [Header("设施数据")]
-    [SerializeField] private FacilityInfo facilityInfo;
-
-    [Header("视觉")]
-    [SerializeField] private SpriteRenderer backgroundRenderer;
+    [Header("建造")]
+    [SerializeField] private float buildTime = 5f;
 
     private State currentState = State.PendingConstruction;
     private float buildTimer;
+    private SpriteRenderer spriteRenderer;
+    private GameObject buildPrompt;
 
-    /// <summary> 当前状态 </summary>
+    /// <summary> GAS 属性集，子类通过 InitAttributes 注册属性 </summary>
+    protected AttributeSet AttributeSet { get; private set; }
+
     public State CurrentState => currentState;
-
-    /// <summary> 是否已建造完成 </summary>
     public bool IsBuilt => currentState == State.Built;
-
-    /// <summary> 建造进度 (0~1) </summary>
-    public float BuildProgress => facilityInfo.buildTime > 0f
-        ? 1f - buildTimer / facilityInfo.buildTime
-        : 1f;
-
-    /// <summary> 状态变化事件 </summary>
+    public float BuildProgress => buildTime > 0f ? 1f - buildTimer / buildTime : 1f;
     public event Action<State> OnStateChanged;
 
     private void Awake()
     {
-        
+        spriteRenderer = transform.Find("Sprite").GetComponent<SpriteRenderer>();
+        buildPrompt = transform.Find("UI")?.gameObject;
+        SetAlpha(0.5f);
+        AttributeSet = new AttributeSet();
+        InitAttributes();
     }
 
-    /// <summary> 注入设施数据并开始建造 </summary>
-    public void InitAndBuild(FacilityInfo info)
-    {
-        facilityInfo = info;
-        Build();
-    }
+    /// <summary> 子类重写以注册属性（Health、Attack 等） </summary>
+    protected virtual void InitAttributes() { }
 
     /// <summary> 开始建造倒计时 </summary>
     public void Build()
     {
-        if (facilityInfo.buildTime <= 0f)
-        {
-            // 建造时间为 0，直接完成
-            CompleteBuilding();
-            return;
-        }
-
-        buildTimer = facilityInfo.buildTime;
+        buildTimer = buildTime;
         SwitchState(State.Building);
-
-        /*// 建造中显示预览贴图
-        if (backgroundRenderer != null && facilityInfo.previewSprite != null)
-            backgroundRenderer.sprite = facilityInfo.previewSprite;*/
     }
 
     private void Update()
@@ -64,33 +46,52 @@ public class Facility : MonoBehaviour
 
         buildTimer -= Time.deltaTime;
         if (buildTimer <= 0f)
-        {
             CompleteBuilding();
-        }
     }
 
-    /// <summary> 建造完成 </summary>
     private void CompleteBuilding()
     {
+        SetAlpha(1f);
         buildTimer = 0f;
         SwitchState(State.Built);
-
-        /*// 切换到建造完成贴图
-        if (backgroundRenderer != null && facilityInfo.builtSprite != null)
-            backgroundRenderer.sprite = facilityInfo.builtSprite;*/
-
         OnBuilt();
     }
 
-    /// <summary> 建造完成回调，子类重写以启用设施功能 </summary>
-    protected virtual void OnBuilt()
+    private void SetAlpha(float alpha)
     {
-        // 子类在此处激活攻击、生产等正常功能
+        if (spriteRenderer == null) return;
+        Color c = spriteRenderer.color;
+        c.a = alpha;
+        spriteRenderer.color = c;
+    }
+
+    /// <summary> 建造完成回调，子类重写以启用设施功能 </summary>
+    protected virtual void OnBuilt() { }
+
+    /// <summary> 显示建造提示 UI </summary>
+    public void ShowPrompt()
+    {
+        if (currentState != State.PendingConstruction) return;
+        if (buildPrompt != null)
+            buildPrompt.SetActive(true);
+    }
+
+    /// <summary> 隐藏建造提示 UI </summary>
+    public void HidePrompt()
+    {
+        if (buildPrompt != null)
+            buildPrompt.SetActive(false);
     }
 
     private void SwitchState(State newState)
     {
         currentState = newState;
+
+        // 离开 PendingConstruction 时隐藏提示
+        if (newState != State.PendingConstruction)
+            HidePrompt();
+
         OnStateChanged?.Invoke(newState);
     }
 }
+
