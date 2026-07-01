@@ -9,6 +9,7 @@ public class InputComponent : MonoBehaviour
     private InputAction moveAction;
     private InputAction jumpAction;
     private InputAction lookatAction;
+    private InputAction interactAction;
     private InputAction lookAction;
     private InputAction attackAction;
 
@@ -36,6 +37,9 @@ public class InputComponent : MonoBehaviour
     /// <summary> 当前帧是否按下了攻击/确认键 </summary>
     public bool AttackPressed { get; private set; }
 
+    /// <summary> 当前帧是否按下了交互键 (E键) </summary>
+    public bool InteractPressed { get; private set; }
+
     private void Awake()
     {
         if (inputActions == null)
@@ -55,12 +59,14 @@ public class InputComponent : MonoBehaviour
         moveAction = playerMap.FindAction("Move");
         jumpAction = playerMap.FindAction("Jump");
         lookatAction = playerMap.FindAction("LookAt");
+        interactAction = playerMap.FindAction("Interact");
         lookAction = playerMap.FindAction("Look");
         attackAction = playerMap.FindAction("Attack");
 
         if (moveAction == null) Debug.LogError("InputComponent: 未找到 'Move' Action");
         if (jumpAction == null) Debug.LogError("InputComponent: 未找到 'Jump' Action");
         if (lookatAction == null) Debug.LogError("InputComponent: 未找到 'lookat' Action");
+        if (interactAction == null) Debug.LogError("InputComponent: 未找到 'Interact' Action");
         if (lookAction == null) Debug.LogError("InputComponent: 未找到 'Look' Action");
         if (attackAction == null) Debug.LogError("InputComponent: 未找到 'Attack' Action");
     }
@@ -102,5 +108,8 @@ public class InputComponent : MonoBehaviour
 
         // 读取攻击/确认键状态
         AttackPressed = attackAction.WasPressedThisFrame();
+
+        // 读取交互键状态 (E键)
+        InteractPressed = interactAction.WasPressedThisFrame();
     }
 }

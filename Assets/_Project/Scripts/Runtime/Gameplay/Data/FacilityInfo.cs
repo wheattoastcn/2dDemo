@@ -9,4 +9,6 @@ public struct FacilityInfo
     public Vector2 colliderSize;
     public float buildTime;
     public int cost;
+    public Sprite prebuildsprite;
+    public Sprite buildsprite;
 }
