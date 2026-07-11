@@ -31,10 +31,10 @@ public class UIManager : MonoBehaviour
         {
             if (panel != null)
             {
-                string key = panel.GetType().Name;   // 用类名作为键，也可以自定义
+                string key = panel.GetType().Name;  // 用类名作为键，也可以自定义
                 if (!panelDict.ContainsKey(key))
                     panelDict.Add(key, panel);
-                panel.Hide();  // 初始全部隐藏
+                // panel.Hide();  // 初始全部隐藏// 不再需要，面板已在场景中设为禁用
             }
         }
 
@@ -116,8 +116,8 @@ public class UIManager : MonoBehaviour
     {
         if (panelDict.TryGetValue(panelName, out UIPanel panel))
         {
-            RemovePanelFromStack(panel);
-            panel.Hide();
+            RemovePanelFromStack(panel);    // 如果用到栈，移除
+            panel.Hide();                   // 调用基类 Hide，里面会 SetActive(false)
             panel.OnClose();
         }
     }
@@ -147,12 +147,57 @@ public class UIManager : MonoBehaviour
     // 关卡加载完成时显示 HUD
     public void OnLevelLoaded(string levelName)
     {
-        HidePanel("MainMenuPanel");
-        ShowPanel("HUDPanel", null, false);  // 不推入栈，HUD常驻底层
+        HidePanel("MainMenuPanel");             // 隐藏主菜单
+        ShowPanel("HUDPanel", null, false);     // 不推入栈，HUD常驻底层
     }
 
     public void ShowTransition(bool show)
     {
         // 可以控制一个全屏遮罩面板
     }
+
+
+
+    [Header("暂停面板")]
+    [SerializeField] private string pausePanelName = "PausePanel";
+
+    private void Update()
+    {
+        // 如果游戏未开始，或主菜单显示中，不响应 Esc
+        if (GameManager.Instance != null && GameManager.Instance.IsGameOver)
+            return; // 游戏结束时不响应 Esc
+
+        if (GameManager.Instance != null && !GameManager.Instance.IsLevelLoaded)
+            return; // 未加载关卡也不响应
+
+        // 如果暂停面板已经打开，不重复打开（按 Esc 会继续游戏）
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (panelStack.Count > 0 && panelStack.Peek().GetType().Name == pausePanelName)
+            {
+                // 暂停面板已是栈顶，按 Esc 关闭
+                CloseCurrentPanel();
+            }
+            else
+            {
+                ShowPanel(pausePanelName);
+            }
+        }
+    }
+
+
+    /// <summary>
+    /// 隐藏所有与游戏进程相关的面板（HUD、暂停、建造等），但不碰主菜单和设置等全局面板
+    /// </summary>
+    public void HideAllGameplayPanels()
+    {
+        // 直接隐藏已知的游戏面板，也可以遍历栈清理
+        HidePanel("HUDPanel");
+        HidePanel("PausePanel");
+        HidePanel("BuildPanel");   // 如果有了建造面板
+        HidePanel("GameOverPanel");
+        // 清空面板栈（因为这些面板都不该再存在）
+        panelStack.Clear();
+    }
+
 }

@@ -22,15 +22,6 @@ public class GameManager : MonoBehaviour
         Instance = this;
     }
 
-    /*    private void Start()
-        {
-            // 如果有配置测试关卡，直接加载；否则显示主菜单
-            if (!string.IsNullOrEmpty(startLevel))
-                LoadLevel(startLevel);
-            else
-                UIManager.Instance?.ShowMainMenu();
-        }*/
-
     private void Start()
     {
         // 如果有配置测试关卡，直接加载；否则显示主菜单
@@ -93,5 +84,76 @@ public class GameManager : MonoBehaviour
 
         // 关闭过场
         UIManager.Instance?.ShowTransition(false);
+
+        // 在 LoadLevelAsync 中，成功加载后记录
+        lastLevelName = levelName;
+        currentLevelName = levelName;
+        IsGameOver = false;
+    }
+
+
+    //PausePanel调用
+
+    // 是否已加载关卡（用于判断是否可以暂停等）
+    public bool IsLevelLoaded => !string.IsNullOrEmpty(currentLevelName);
+
+    public void ReturnToMainMenu()
+    {
+        // 1. 卸载关卡  // 停止可能正在运行的加载协程（简单处理：直接卸载）
+        if (!string.IsNullOrEmpty(currentLevelName))
+        {
+            Scene oldScene = SceneManager.GetSceneByName(currentLevelName);
+            if (oldScene.isLoaded)
+                SceneManager.UnloadSceneAsync(oldScene);
+            currentLevelName = null;
+        }
+
+        // 2. 清空关卡对象    // 清理关卡相关对象（如果 levelRoot 下有物体，全部销毁）
+        if (levelRoot != null)
+        {
+            foreach (Transform child in levelRoot)
+                Destroy(child.gameObject);
+        }
+
+        IsGameOver = false;
+
+        // 3. 隐藏所有游戏内 UI
+        UIManager.Instance?.HideAllGameplayPanels();
+
+        // 4. 显示主菜单
+        UIManager.Instance?.ShowMainMenu();
+    }
+
+
+
+    //GameOverPanel调用
+
+    private string lastLevelName; // 记录上次加载的关卡名，用于重新开始
+
+    public bool IsGameOver { get; private set; }
+
+    public void GameOver(bool isVictory)
+    {
+        if (IsGameOver) return;
+        IsGameOver = true;
+
+        // 隐藏其他游戏内面板（保留 GameOverPanel 独占）
+        UIManager.Instance?.HidePanel("HUDPanel");
+        UIManager.Instance?.HidePanel("PausePanel");
+        UIManager.Instance?.HidePanel("BuildPanel");
+
+        // 显示结果面板
+        UIManager.Instance?.ShowPanel("GameOverPanel", isVictory);
+    }
+
+    public void RestartLevel()
+    {
+        if (string.IsNullOrEmpty(lastLevelName))
+        {
+            Debug.LogError("没有可重新开始的关卡！");
+            return;
+        }
+        IsGameOver = false;
+        LoadLevel(lastLevelName);
     }
 }

@@ -36,8 +36,21 @@ public class MainMenuPanel : UIPanel
 
     private void OnQuitClicked()
     {
+
+        // 增加一个确认对话框（需要新建一个通用的确认面板）
+        //UIManager.Instance.ShowPanel("ConfirmPanel", "确定要退出游戏吗？");
+
         // 退出游戏（在编辑器里不会真正退出）
+        QuitGame();
+    }
+
+    public static void QuitGame()
+    {
+#if UNITY_EDITOR
+    UnityEditor.EditorApplication.isPlaying = false;
+#else
         Application.Quit();
+#endif
     }
 
     private void OnDestroy()
@@ -48,10 +61,17 @@ public class MainMenuPanel : UIPanel
         if (quitButton != null) quitButton.onClick.RemoveListener(OnQuitClicked);
     }
 
-    public override void Show()
+    //临时重新函数用于Debug
+/*    public override void Show()
     {
         base.Show();
         Debug.Log($"[MainMenuPanel] Show 执行，gameObject.activeSelf = {gameObject.activeSelf}");
         Debug.Log($"[MainMenuPanel] CanvasGroup alpha = {canvasGroup.alpha}, interactable = {canvasGroup.interactable}");
     }
+
+    public override void Hide()
+    {
+        base.Hide();
+        Debug.Log("MainMenuPanel Hide 被调用, activeSelf: " + gameObject.activeSelf);
+    }*/
 }
