@@ -1,0 +1,32 @@
+关卡场景 (Scene Root)
+│
+├── --- 逻辑层 (程序主责) ---
+├── Logic                           # 所有功能逻辑相关物体
+│   ├── Managers                    #   场景独有管理器 (一般不挂东西，可放启动触发)
+│   ├── Path                        #   敌人移动路径点 (空节点/Transform序列)
+│   ├── SpawnPoints                 #   出生点、集合点
+│   ├── TowerPositions              #   允许建塔的位置标记 (空节点带脚本)
+│   ├── EnemyContainer              #   运行时生成的敌人实例将挂在此下
+│   └── ProjectileContainer        #   运行时生成的子弹/特效逻辑实例
+│
+├── --- 表现层 (技术美术主责) ---
+├── Art                            # 所有视觉内容
+│   ├── Background                 #   远、中、近景背景层
+│   │   ├── Sky
+│   │   ├── Mountains
+│   │   └── Clouds
+│   ├── Environment                #   地形、平台、地面装饰 (可与碰撞对应)
+│   │   ├── Ground
+│   │   ├── Platforms
+│   │   └── Props
+│   ├── Lighting                   #   2D光照、全局光、Light 2D等
+│   └── VFX_Ambient                #   环境特效 (落叶、灰尘、光线等)
+│
+├── --- UI层 (程序主责，TA提供图) ---
+├── UI                             # 所有UI Canvas
+│   ├── HUD                        #   常驻的：生命、金币、波次信息
+│   ├── Menus                      #   暂停菜单、胜利/失败面板
+│   └── TowerBuildPanel           #   选塔、升级面板
+│
+└── --- 其他 (共用) ---
+└── PostProcessing                # 后处理Volume等 (TA负责效果，程序挂载启用)
