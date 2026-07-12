@@ -142,4 +142,3 @@ public class BuildPanel : UIPanel
             toggleButton.onClick.RemoveAllListeners();
     }
 }
-}
