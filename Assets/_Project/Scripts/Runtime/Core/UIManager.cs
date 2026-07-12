@@ -1,9 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; }
+
+    private GameInputActions inputActions;  // 输入动作资产实例
 
     // 所有面板的根节点（在Canvas下创建空节点 Panels）
     [SerializeField] private Transform panelsRoot;
@@ -22,9 +25,17 @@ public class UIManager : MonoBehaviour
     [SerializeField] private UIPanel pausePanel;
     [SerializeField] private UIPanel gameOverPanel;
 
+    //初始化
     private void Awake()
     {
         Instance = this;
+
+        // 初始化输入系统
+        inputActions = new GameInputActions();
+        inputActions.UI.Enable();    // 启用 UI Action Map
+
+        // 绑定 Pause 动作
+        inputActions.UI.Pause.performed += OnPausePerformed;
 
         // 初始化面板字典
         foreach (var panel in allPanels)
@@ -48,7 +59,32 @@ public class UIManager : MonoBehaviour
         Debug.Log($"[UIManager] Awake 完成，面板字典数量：{panelDict.Count}");
         foreach (var kvp in panelDict)
             Debug.Log($"[UIManager] 面板键：{kvp.Key}, 实例名称：{kvp.Value.name}");
+
     }
+
+    //渲染帧
+    private void Update()
+    {
+        /*        // 如果游戏未开始，或主菜单显示中，不响应 Esc
+                if (GameManager.Instance != null && GameManager.Instance.IsGameOver)
+                    return; // 游戏结束时不响应 Esc
+
+                if (GameManager.Instance != null && !GameManager.Instance.IsLevelLoaded)
+                    return; // 未加载关卡也不响应*/
+    }
+
+    //清理资源
+    private void OnDestroy()
+    {
+        if (inputActions != null)
+        {
+            inputActions.UI.Pause.performed -= OnPausePerformed;
+            inputActions.UI.Disable();
+            inputActions.Dispose();
+        }
+    }
+
+
 
     private void RegisterPanel(string name, UIPanel panel)
     {
@@ -156,39 +192,7 @@ public class UIManager : MonoBehaviour
         // 可以控制一个全屏遮罩面板
     }
 
-
-
-    [Header("暂停面板")]
-    [SerializeField] private string pausePanelName = "PausePanel";
-
-    private void Update()
-    {
-        // 如果游戏未开始，或主菜单显示中，不响应 Esc
-        if (GameManager.Instance != null && GameManager.Instance.IsGameOver)
-            return; // 游戏结束时不响应 Esc
-
-        if (GameManager.Instance != null && !GameManager.Instance.IsLevelLoaded)
-            return; // 未加载关卡也不响应
-
-        // 如果暂停面板已经打开，不重复打开（按 Esc 会继续游戏）
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            if (panelStack.Count > 0 && panelStack.Peek().GetType().Name == pausePanelName)
-            {
-                // 暂停面板已是栈顶，按 Esc 关闭
-                CloseCurrentPanel();
-            }
-            else
-            {
-                ShowPanel(pausePanelName);
-            }
-        }
-    }
-
-
-    /// <summary>
     /// 隐藏所有与游戏进程相关的面板（HUD、暂停、建造等），但不碰主菜单和设置等全局面板
-    /// </summary>
     public void HideAllGameplayPanels()
     {
         // 直接隐藏已知的游戏面板，也可以遍历栈清理
@@ -198,6 +202,30 @@ public class UIManager : MonoBehaviour
         HidePanel("GameOverPanel");
         // 清空面板栈（因为这些面板都不该再存在）
         panelStack.Clear();
+    }
+
+    //Pause
+    [Header("暂停面板")]
+    [SerializeField] private string pausePanelName = "PausePanel";
+
+    private void OnPausePerformed(InputAction.CallbackContext context)
+    {
+        // 防御：确保游戏逻辑允许暂停
+        if (GameManager.Instance == null || !GameManager.Instance.IsLevelLoaded)
+            return;
+
+        if (GameManager.Instance.IsGameOver)
+            return;
+
+        // 如果暂停面板已经是栈顶，按 Esc 就关闭
+        if (panelStack.Count > 0 && panelStack.Peek().GetType().Name == "PausePanel")
+        {
+            CloseCurrentPanel();
+        }
+        else
+        {
+            ShowPanel("PausePanel");
+        }
     }
 
 }

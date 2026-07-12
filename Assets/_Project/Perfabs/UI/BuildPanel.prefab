@@ -1618,5 +1618,5 @@ MonoBehaviour:
   buildManager: {fileID: 0}
   panelRoot: {fileID: 7280784556420829009}
   toggleButton: {fileID: 0}
-  buttonPrefab: {fileID: 0}
+  buttonPrefab: {fileID: 5470424905615170435, guid: facc002f7e8042340b223b7d45475649, type: 3}
   contentParent: {fileID: 4774933735666795750}

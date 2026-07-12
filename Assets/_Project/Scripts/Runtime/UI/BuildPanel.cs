@@ -72,7 +72,7 @@ public class BuildPanel : UIPanel
         }
     }*/
 
-
+    //
     private void Start()
     {
         // 原有动态生成
@@ -88,6 +88,16 @@ public class BuildPanel : UIPanel
 
         // 初始隐藏交给 UIManager.Awake 处理，这里无需手动 SetActive
     }
+
+    //清理资源
+    private void OnDestroy()
+    {
+        if (buildManager != null)
+            buildManager.OnStateChanged -= OnBuildStateChanged;
+        if (toggleButton != null)
+            toggleButton.onClick.RemoveAllListeners();
+    }
+
 
     public override void Show()
     {
@@ -132,13 +142,5 @@ public class BuildPanel : UIPanel
         {
             UIManager.Instance?.HidePanel("BuildPanel");
         }
-    }
-
-    private void OnDestroy()
-    {
-        if (buildManager != null)
-            buildManager.OnStateChanged -= OnBuildStateChanged;
-        if (toggleButton != null)
-            toggleButton.onClick.RemoveAllListeners();
     }
 }

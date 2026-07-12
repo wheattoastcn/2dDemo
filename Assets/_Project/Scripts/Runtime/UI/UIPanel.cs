@@ -24,8 +24,11 @@ public abstract class UIPanel : MonoBehaviour
     // Òþ²ØÃæ°å
     public virtual void Hide()
     {
-        canvasGroup.interactable = false;
-        canvasGroup.blocksRaycasts = false;
+        if (canvasGroup != null)
+        {
+            canvasGroup.interactable = false;
+            canvasGroup.blocksRaycasts = false;
+        }
         gameObject.SetActive(false);
     }
 
