@@ -51,9 +51,10 @@ public class GameManager : MonoBehaviour
         // 可选：播放过场动画
         UIManager.Instance?.ShowTransition(true);
 
-        // 卸载之前的关卡
+        // 卸载之前的关卡，同时清空跨场景注册表
         if (!string.IsNullOrEmpty(currentLevelName))
         {
+            UIManager.Instance?.ClearRegistry();
             Scene oldScene = SceneManager.GetSceneByName(currentLevelName);
             if (oldScene.isLoaded)
             {
@@ -78,6 +79,9 @@ public class GameManager : MonoBehaviour
         }
 
         currentLevelName = levelName;
+
+        // 等待一帧让游戏场景的 Start/Awake 执行完毕（组件自注册）
+        yield return null;
 
         // 通知 UIManager 关卡已加载
         UIManager.Instance?.OnLevelLoaded(levelName);
@@ -116,6 +120,9 @@ public class GameManager : MonoBehaviour
         }
 
         IsGameOver = false;
+
+        // 清空跨场景注册表
+        UIManager.Instance?.ClearRegistry();
 
         // 3. 隐藏所有游戏内 UI
         UIManager.Instance?.HideAllGameplayPanels();

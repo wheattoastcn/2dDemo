@@ -26,6 +26,17 @@ public class BuildManager : MonoBehaviour
     private FacilityInfo currentFacility;
     private FacilityPlacer currentPlacer;
 
+    private void Start()
+    {
+        // 注册到 UIManager，供 UI 面板跨场景获取
+        UIManager.Instance?.Register(this);
+    }
+
+    private void OnDestroy()
+    {
+        UIManager.Instance?.Unregister<BuildManager>();
+    }
+
     private void Update()
     {
         if (CurrentState != State.Previewing || currentPlacer == null) return;
