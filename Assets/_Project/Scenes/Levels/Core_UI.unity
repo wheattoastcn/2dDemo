@@ -526,6 +526,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1206761969567093752, guid: cd07d2e5f26707a4e8f00b29bfe056ac, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.00000023841858
+      objectReference: {fileID: 0}
     - target: {fileID: 2701837474866623447, guid: cd07d2e5f26707a4e8f00b29bfe056ac, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -640,8 +644,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5601064469875694030, guid: cd07d2e5f26707a4e8f00b29bfe056ac, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0.39
+      value: 0.39000005
       objectReference: {fileID: 0}
+    - target: {fileID: 7680217131506191438, guid: cd07d2e5f26707a4e8f00b29bfe056ac, type: 3}
+      propertyPath: buttonPrefab
+      value: 
+      objectReference: {fileID: 1809979394414828920, guid: c3bc1c9699fc60f40b73db6b1f6e4c63, type: 3}
     - target: {fileID: 9139876030268621129, guid: cd07d2e5f26707a4e8f00b29bfe056ac, type: 3}
       propertyPath: m_Name
       value: BuildPanel
@@ -651,7 +659,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 6799205318885860499, guid: cd07d2e5f26707a4e8f00b29bfe056ac, type: 3}
+    - {fileID: 1673658200135256422, guid: cd07d2e5f26707a4e8f00b29bfe056ac, type: 3}
+    - {fileID: 8751952340862789753, guid: cd07d2e5f26707a4e8f00b29bfe056ac, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cd07d2e5f26707a4e8f00b29bfe056ac, type: 3}

@@ -31,22 +31,23 @@ public class CameraController : MonoBehaviour
 
     private void Start()
     {
-        if (player != null)
-        {
-            input = player.GetComponent<InputComponent>();
-
-            Vector3 pos = transform.position;
-            pos.y = fixedY;
-            transform.position = pos;
-        }
+        Vector3 pos = transform.position;
+        pos.y = fixedY;
+        transform.position = pos;
     }
 
     private void LateUpdate()
     {
         if (cam == null) return;
 
+        // 跨场景延迟获取 Player（游戏场景可能还没加载）
+        if (player == null)
+            TryGetPlayer();
+
+        if (player == null) return;
+
         // Q键按下时触发线性移动
-        if (input != null && input.LookatPressed && player != null)
+        if (input != null && input.LookatPressed)
         {
             StartMoveToPlayer();
         }
@@ -111,16 +112,10 @@ public class CameraController : MonoBehaviour
         float screenWidth = Screen.width;
         float direction = 0f;
 
-        // 鼠标在左边缘
         if (mousePos.x <= edgeThreshold)
-        {
             direction = -1f;
-        }
-        // 鼠标在右边缘
         else if (mousePos.x >= screenWidth - edgeThreshold)
-        {
             direction = 1f;
-        }
 
         if (Mathf.Approximately(direction, 0f)) return;
 
@@ -128,5 +123,18 @@ public class CameraController : MonoBehaviour
         pos.x += direction * edgePanSpeed * Time.deltaTime;
         pos.y = fixedY;
         transform.position = pos;
+    }
+
+    // ==================== 跨场景获取 Player ====================
+
+    /// <summary> 通过 UIManager 注册中心延迟获取 Player </summary>
+    private void TryGetPlayer()
+    {
+        PlayerReference playerRef = UIManager.Instance?.Get<PlayerReference>();
+        if (playerRef != null)
+        {
+            player = playerRef.transform;
+            input = player.GetComponent<InputComponent>();
+        }
     }
 }
